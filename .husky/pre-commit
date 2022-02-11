@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+if git diff --staged --name-only | grep -q '\.js$'; then
+  npm run build >/dev/null 2>&1
+  if ! git diff --quiet -- :/out.js; then
+    echo 'There are staged changes in .js files, but out.js is not staged' 2>&1
+    exit 1
+  fi
+fi
