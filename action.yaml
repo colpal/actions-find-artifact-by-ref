@@ -1,0 +1,28 @@
+---
+name: find-artifact-by-ref
+
+description: Find a workflow artifact for a particular ref
+
+inputs:
+  ref:
+    description: Only search workflows on this git ref
+    required: true
+  artifact-name:
+    description: Only match artifacts with this name
+    required: true
+  check-name:
+    description: Only search workflows that contain a matching check name
+    required: false
+    default: ''
+  download:
+    description: If set, will download the matched artifact
+    required: false
+    default: 'false'
+
+outputs:
+  artifact-id:
+    description: The artifact ID of the found artifact
+
+runs:
+  using: node16
+  main: main.js
