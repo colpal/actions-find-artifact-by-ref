@@ -20,8 +20,8 @@ inputs:
     default: 'false'
   github-token:
     description: The GitHub token used to create an authenticated client
-    default: ${{ github.token }}
     required: false
+    default: ${{ github.token }}
 
 outputs:
   artifact-id:
