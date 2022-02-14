@@ -13,7 +13,6 @@ inputs:
   check-name:
     description: Only search workflows that contain a matching check name
     required: false
-    default: ''
   download:
     description: If set, will download the matched artifact
     required: false
