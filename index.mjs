@@ -1,5 +1,5 @@
 import { writeFile } from 'fs/promises';
-import { getInput, setOutput } from '@actions/core';
+import { getBooleanInput, getInput, setOutput } from '@actions/core';
 import * as github from '@actions/github';
 
 function flatten(xs) {
@@ -45,7 +45,7 @@ async function main() {
     case 1: {
       const [artifact] = matching_artifacts;
       setOutput('artifact_id', artifact.id);
-      if (getInput('download')) {
+      if (getBooleanInput('download')) {
         const { data } = await github.rest.actions.downloadArtifact({
           ...github.context.repo,
           archive_format: 'zip',
