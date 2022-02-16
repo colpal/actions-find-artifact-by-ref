@@ -13,13 +13,12 @@ async function main() {
 
   const octokit = github.getOctokit(token);
 
-  const check_name = getInput('check_name');
   const check_suites = await octokit.paginate(
     octokit.rest.checks.listSuitesForRef,
     {
       ...github.context.repo,
       ref,
-      check_name,
+      check_name: getInput('check_name'),
       status: 'completed',
     },
   );
