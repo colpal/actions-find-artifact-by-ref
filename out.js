@@ -6595,24 +6595,24 @@ var github = __toESM(require_github(), 1);
 function flatten(xs) {
   return xs.flat();
 }
-async function get_all_check_suites(octokit, ref) {
+async function getAllCheckSuites(octokit, ref) {
   return octokit.paginate(octokit.rest.checks.listSuitesForRef, __spreadProps(__spreadValues({}, github.context.repo), {
     ref,
     check_name: (0, import_core.getInput)("check_name"),
     status: "completed"
   }));
 }
-async function get_all_workflow_runs(octokit, check_suites) {
-  return Promise.all(check_suites.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, __spreadProps(__spreadValues({}, github.context.repo), {
+async function getAllWorkflowRuns(octokit, checkSuites) {
+  return Promise.all(checkSuites.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, __spreadProps(__spreadValues({}, github.context.repo), {
     check_suite_id: id
   })))).then(flatten);
 }
-async function get_all_artifacts(octokit, workflow_runs) {
-  return Promise.all(workflow_runs.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, __spreadProps(__spreadValues({}, github.context.repo), {
+async function getAllArtifacts(octokit, workflowRuns) {
+  return Promise.all(workflowRuns.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, __spreadProps(__spreadValues({}, github.context.repo), {
     run_id: id
   })))).then(flatten);
 }
-async function download_artifact(octokit, { id, name }) {
+async function downloadArtifact(octokit, { id, name }) {
   const { data } = await octokit.rest.actions.downloadArtifact(__spreadProps(__spreadValues({}, github.context.repo), {
     archive_format: "zip",
     artifact_id: id
@@ -6621,28 +6621,28 @@ async function download_artifact(octokit, { id, name }) {
 }
 async function main() {
   const token = (0, import_core.getInput)("github_token", { required: true });
-  const artifact_name = (0, import_core.getInput)("artifact_name", { required: true });
+  const artifactName = (0, import_core.getInput)("artifact_name", { required: true });
   const ref = (0, import_core.getInput)("ref", { required: true });
   const octokit = github.getOctokit(token);
-  const check_suites = await get_all_check_suites(octokit, ref);
-  const workflow_runs = await get_all_workflow_runs(octokit, check_suites);
-  const artifacts = await get_all_artifacts(octokit, workflow_runs);
-  const matching_artifacts = artifacts.filter((a) => a.name === artifact_name);
-  switch (matching_artifacts.length) {
+  const checkSuites = await getAllCheckSuites(octokit, ref);
+  const workflowRuns = await getAllWorkflowRuns(octokit, checkSuites);
+  const artifacts = await getAllArtifacts(octokit, workflowRuns);
+  const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
+  switch (matchingArtifacts.length) {
     case 1: {
-      const [artifact] = matching_artifacts;
+      const [artifact] = matchingArtifacts;
       (0, import_core.setOutput)("artifact_id", artifact.id);
       if ((0, import_core.getBooleanInput)("download")) {
-        await download_artifact(octokit, artifact);
+        await downloadArtifact(octokit, artifact);
       }
       break;
     }
     case 0:
       (0, import_core.setOutput)("error", "no-artifacts");
-      throw new Error(`No artifacts found match the name: ${artifact_name}`);
+      throw new Error(`No artifacts found match the name: ${artifactName}`);
     default: {
       (0, import_core.setOutput)("error", "multiple-artifacts");
-      const urls = matching_artifacts.map((a) => `'${a.url}'`).join(", ");
+      const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(", ");
       throw new Error(`Multiple artifacts found: [ ${urls} ]`);
     }
   }
