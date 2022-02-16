@@ -27,7 +27,7 @@ jobs:
           ref: initial-workflow-dispatch
           artifact_name: Cherry
 
-      - if: "steps.single.outputs.artifact_id == 165488281
-             && steps.multiple.outcome == 'failure'
-             && steps.none.outcome == 'failure'"
+      - if: "steps.single.outputs.artifact_id == 165488281 &&
+             steps.multiple.outputs.error == 'multiple-artifacts' &&
+             steps.none.outputs.error == 'no-artifacts'"
         run: exit

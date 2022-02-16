@@ -6638,8 +6638,10 @@ async function main() {
       break;
     }
     case 0:
+      (0, import_core.setOutput)("error", "no-artifacts");
       throw new Error(`No artifacts found match the name: ${artifact_name}`);
     default: {
+      (0, import_core.setOutput)("error", "multiple-artifacts");
       const urls = matching_artifacts.map((a) => `'${a.url}'`).join(", ");
       throw new Error(`Multiple artifacts found: [ ${urls} ]`);
     }

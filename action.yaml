@@ -23,6 +23,8 @@ inputs:
     default: ${{ github.token }}
 
 outputs:
+  error:
+    description: An error code if the action fails (mostly for testing)
   artifact_id:
     description: The artifact ID of the found artifact
 
