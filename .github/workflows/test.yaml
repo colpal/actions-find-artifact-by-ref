@@ -18,14 +18,14 @@ jobs:
         continue-on-error: true
         with:
           ref: initial-workflow-dispatch
-          artifact-name: Apple
+          artifact_name: Apple
 
       - id: none
         uses: ./
         continue-on-error: true
         with:
           ref: initial-workflow-dispatch
-          artifact-name: Cherry
+          artifact_name: Cherry
 
       - if: "steps.single.outputs.artifact_id == 165488281
              && steps.multiple.outcome == 'failure'
