@@ -7,23 +7,23 @@ inputs:
   ref:
     description: Only search workflows on this git ref
     required: true
-  artifact-name:
+  artifact_name:
     description: Only match artifacts with this name
     required: true
-  check-name:
+  check_name:
     description: Only search workflows that contain a matching check name
     required: false
   download:
     description: If set, will download the matched artifact
     required: false
     default: 'false'
-  github-token:
+  github_token:
     description: The GitHub token used to create an authenticated client
     required: false
     default: ${{ github.token }}
 
 outputs:
-  artifact-id:
+  artifact_id:
     description: The artifact ID of the found artifact
 
 runs:

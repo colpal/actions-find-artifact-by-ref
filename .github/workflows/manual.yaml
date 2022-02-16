@@ -2,7 +2,7 @@
 'on':
   workflow_dispatch:
     inputs:
-      artifact-name:
+      artifact_name:
         required: true
 
 jobs:
@@ -11,9 +11,9 @@ jobs:
     steps:
       - run: echo 42 > "$ARTIFACT_NAME.txt"
         env:
-          ARTIFACT_NAME: ${{ github.event.inputs.artifact-name }}
+          ARTIFACT_NAME: ${{ github.event.inputs.artifact_name }}
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.event.inputs.artifact-name }}
-          path: ${{ github.event.inputs.artifact-name }}.txt
+          name: ${{ github.event.inputs.artifact_name }}
+          path: ${{ github.event.inputs.artifact_name }}.txt
