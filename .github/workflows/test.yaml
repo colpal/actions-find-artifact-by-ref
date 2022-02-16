@@ -30,3 +30,4 @@ jobs:
       - if: "steps.single.outputs.artifact_id == 165488281
              && steps.multiple.outcome == 'failure'
              && steps.none.outcome == 'failure'"
+        run: exit
