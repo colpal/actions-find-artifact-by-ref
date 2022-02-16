@@ -23,19 +23,19 @@ async function main() {
     },
   );
 
-  const workflow_runs = await Promise
-    .all(check_suites.map(({ id }) => octokit.paginate(
-      octokit.rest.actions.listWorkflowRunsForRepo,
-      { ...github.context.repo, check_suite_id: id },
-    )))
-    .then(flatten);
+  const workflow_runs = await Promise.all(check_suites.map(({ id }) => (
+    octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, {
+      ...github.context.repo,
+      check_suite_id: id,
+    })
+  ))).then(flatten);
 
-  const artifacts = await Promise
-    .all(workflow_runs.map(({ id }) => octokit.paginate(
-      octokit.rest.actions.listWorkflowRunArtifacts,
-      { ...github.context.repo, run_id: id },
-    )))
-    .then(flatten);
+  const artifacts = await Promise.all(workflow_runs.map(({ id }) => (
+    octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, {
+      ...github.context.repo,
+      run_id: id,
+    })
+  ))).then(flatten);
 
   const matching_artifacts = artifacts
     .filter(({ name }) => name === artifact_name);
