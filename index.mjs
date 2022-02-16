@@ -46,7 +46,7 @@ async function main() {
       const [artifact] = matching_artifacts;
       setOutput('artifact_id', artifact.id);
       if (getBooleanInput('download')) {
-        const { data } = await github.rest.actions.downloadArtifact({
+        const { data } = await octokit.rest.actions.downloadArtifact({
           ...github.context.repo,
           archive_format: 'zip',
           artifact_id: artifact.id,
