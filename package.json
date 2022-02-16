@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "esbuild index.mjs --bundle --minify --outfile=out.js --platform=node --target=node16",
+    "build": "esbuild index.mjs --bundle --outfile=out.js --platform=node --target=node16",
     "prepare": "husky install"
   },
   "devDependencies": {
