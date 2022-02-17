@@ -18,9 +18,9 @@ jobs:
           artifact_name: Banana
           download: true
 
-      - run: env
+      - run: md5sum -c <<< "$EXPECTED Banana.zip"
         env:
-          HASH: ${{ hashFiles('Banana.zip') }}
+          EXPECTED: 9ae11cf898d2956092d297ed9bf339ae
 
       - id: multiple
         uses: ./
