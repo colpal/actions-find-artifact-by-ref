@@ -32,3 +32,13 @@ one matching artifacts are found.
     # Default: ${{ github.token }}
     github_token: string
 ```
+
+## Outputs
+
+```yaml
+# The GitHub API Artifact ID associated with the matched artifact
+artifact_id: string
+
+# The error code (if an error is encountered)
+error: string
+```
