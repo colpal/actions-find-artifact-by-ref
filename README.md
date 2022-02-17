@@ -60,6 +60,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.6
 
       - run: terraform init -input=false
 
@@ -89,6 +91,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.6
 
       - run: terraform init -input=false
 
