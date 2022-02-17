@@ -1,5 +1,9 @@
 ---
-'on': push
+'on':
+  push:
+    paths:
+      - out.js
+      - .github/workflows/test.yaml
 
 jobs:
   test:
