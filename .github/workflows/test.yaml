@@ -18,10 +18,9 @@ jobs:
           artifact_name: Banana
           download: true
 
-      - run: exit 1
-        if: "'bd0e39476caf4065f42251d97e5a07232269fc2a335621a2f5f1bd5774f03cfe'
-             !=
-             hashFiles('Banana.zip')"
+      - run: env
+        env:
+          HASH: ${{ hashFiles('Banana.zip') }}
 
       - id: multiple
         uses: ./
