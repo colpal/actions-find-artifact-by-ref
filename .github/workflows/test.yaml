@@ -22,6 +22,11 @@ jobs:
         env:
           EXPECTED: 9ae11cf898d2956092d297ed9bf339ae
 
+      - run: test "$EXPECTED" = "$ACTUAL"
+        env:
+          EXPECTED: 165488281
+          ACTUAL: ${{ steps.single.outputs.artifact_id }}
+
       - id: multiple
         uses: ./
         continue-on-error: true
@@ -36,7 +41,6 @@ jobs:
           ref: initial-workflow-dispatch
           artifact_name: Cherry
 
-      - if: "steps.single.outputs.artifact_id == 165488281 &&
-             steps.multiple.outputs.error == 'multiple-artifacts' &&
+      - if: "steps.multiple.outputs.error == 'multiple-artifacts' &&
              steps.none.outputs.error == 'no-artifacts'"
         run: exit
