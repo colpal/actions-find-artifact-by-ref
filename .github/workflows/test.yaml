@@ -34,6 +34,11 @@ jobs:
           ref: initial-workflow-dispatch
           artifact_name: Apple
 
+      - run: test "$EXPECTED" = "$ACTUAL"
+        env:
+          EXPECTED: multiple-artifacts
+          ACTUAL: ${{ steps.multiple.outputs.error }}
+
       - id: none
         uses: ./
         continue-on-error: true
@@ -41,6 +46,5 @@ jobs:
           ref: initial-workflow-dispatch
           artifact_name: Cherry
 
-      - if: "steps.multiple.outputs.error == 'multiple-artifacts' &&
-             steps.none.outputs.error == 'no-artifacts'"
+      - if: steps.none.outputs.error == 'no-artifacts'
         run: exit
