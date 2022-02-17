@@ -6591,29 +6591,29 @@ var require_github = __commonJS({
 // index.mjs
 var import_promises = require("fs/promises");
 var import_core = __toESM(require_core(), 1);
-var github = __toESM(require_github(), 1);
+var import_github = __toESM(require_github(), 1);
 function flatten(xs) {
   return xs.flat();
 }
 async function getAllCheckSuites(octokit, ref) {
-  return octokit.paginate(octokit.rest.checks.listSuitesForRef, __spreadProps(__spreadValues({}, github.context.repo), {
+  return octokit.paginate(octokit.rest.checks.listSuitesForRef, __spreadProps(__spreadValues({}, import_github.context.repo), {
     ref,
     check_name: (0, import_core.getInput)("check_name"),
     status: "completed"
   }));
 }
 async function getAllWorkflowRuns(octokit, checkSuites) {
-  return Promise.all(checkSuites.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, __spreadProps(__spreadValues({}, github.context.repo), {
+  return Promise.all(checkSuites.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, __spreadProps(__spreadValues({}, import_github.context.repo), {
     check_suite_id: id
   })))).then(flatten);
 }
 async function getAllArtifacts(octokit, workflowRuns) {
-  return Promise.all(workflowRuns.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, __spreadProps(__spreadValues({}, github.context.repo), {
+  return Promise.all(workflowRuns.map(({ id }) => octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, __spreadProps(__spreadValues({}, import_github.context.repo), {
     run_id: id
   })))).then(flatten);
 }
 async function downloadArtifact(octokit, { id, name }) {
-  const { data } = await octokit.rest.actions.downloadArtifact(__spreadProps(__spreadValues({}, github.context.repo), {
+  const { data } = await octokit.rest.actions.downloadArtifact(__spreadProps(__spreadValues({}, import_github.context.repo), {
     archive_format: "zip",
     artifact_id: id
   }));
@@ -6623,7 +6623,7 @@ async function main() {
   const token = (0, import_core.getInput)("github_token", { required: true });
   const artifactName = (0, import_core.getInput)("artifact_name", { required: true });
   const ref = (0, import_core.getInput)("ref", { required: true });
-  const octokit = github.getOctokit(token);
+  const octokit = (0, import_github.getOctokit)(token);
   const checkSuites = await getAllCheckSuites(octokit, ref);
   const workflowRuns = await getAllWorkflowRuns(octokit, checkSuites);
   const artifacts = await getAllArtifacts(octokit, workflowRuns);

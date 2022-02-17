@@ -1,6 +1,6 @@
 import { writeFile } from 'fs/promises';
 import { getBooleanInput, getInput, setOutput } from '@actions/core';
-import * as github from '@actions/github';
+import { context, getOctokit } from '@actions/github';
 
 function flatten(xs) {
   return xs.flat();
@@ -8,7 +8,7 @@ function flatten(xs) {
 
 async function getAllCheckSuites(octokit, ref) {
   return octokit.paginate(octokit.rest.checks.listSuitesForRef, {
-    ...github.context.repo,
+    ...context.repo,
     ref,
     check_name: getInput('check_name'),
     status: 'completed',
@@ -18,7 +18,7 @@ async function getAllCheckSuites(octokit, ref) {
 async function getAllWorkflowRuns(octokit, checkSuites) {
   return Promise.all(checkSuites.map(({ id }) => (
     octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, {
-      ...github.context.repo,
+      ...context.repo,
       check_suite_id: id,
     })
   ))).then(flatten);
@@ -27,7 +27,7 @@ async function getAllWorkflowRuns(octokit, checkSuites) {
 async function getAllArtifacts(octokit, workflowRuns) {
   return Promise.all(workflowRuns.map(({ id }) => (
     octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, {
-      ...github.context.repo,
+      ...context.repo,
       run_id: id,
     })
   ))).then(flatten);
@@ -35,7 +35,7 @@ async function getAllArtifacts(octokit, workflowRuns) {
 
 async function downloadArtifact(octokit, { id, name }) {
   const { data } = await octokit.rest.actions.downloadArtifact({
-    ...github.context.repo,
+    ...context.repo,
     archive_format: 'zip',
     artifact_id: id,
   });
@@ -47,7 +47,7 @@ async function main() {
   const artifactName = getInput('artifact_name', { required: true });
   const ref = getInput('ref', { required: true });
 
-  const octokit = github.getOctokit(token);
+  const octokit = getOctokit(token);
 
   const checkSuites = await getAllCheckSuites(octokit, ref);
   const workflowRuns = await getAllWorkflowRuns(octokit, checkSuites);
