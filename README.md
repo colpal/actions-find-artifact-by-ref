@@ -86,6 +86,7 @@ concurrency: terraform
 
 jobs:
   apply:
+    if: github.event.pull_request.merged == 'true'
     runs-on: # ...
     steps:
       - uses: actions/checkout@v2
