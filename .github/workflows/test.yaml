@@ -46,5 +46,7 @@ jobs:
           ref: initial-workflow-dispatch
           artifact_name: Cherry
 
-      - if: steps.none.outputs.error == 'no-artifacts'
-        run: exit
+      - run: test "$EXPECTED" = "$ACTUAL"
+        env:
+          EXPECTED: no-artifacts
+          ACTUAL: ${{ steps.none.outputs.error }}
