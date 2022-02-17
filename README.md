@@ -1,7 +1,8 @@
 # actions-find-artifact-by-ref
 
 Search all workflows associated with a particular ref (commit/tag/branch) to
-find (and possibly download) a specific artifact
+find (and possibly download) a specific artifact. Will fail if zero or more than
+one matching artifacts are found.
 
 ## Usage
 
