@@ -6,6 +6,30 @@ function flatten(xs) {
   return xs.flat();
 }
 
+async function queryWorkflowsForCommit(octokit, commit) {
+  const response = await octokit.graphql(
+    `
+      query ($owner: String!, $repo: String!, $commit: GitObjectID!) {
+        repository(owner: $owner, name: $repo) {
+          object(oid: $commit) {
+            ... on Commit {
+              checkSuites(last: 100) {
+                nodes {
+                  workflowRun {
+                    databaseId
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    { ...context.repo, commit },
+  );
+  return response.repository.object.checkSuites.nodes;
+}
+
 async function getAllCheckSuites(octokit, ref) {
   return octokit.paginate(octokit.rest.checks.listSuitesForRef, {
     ...context.repo,
