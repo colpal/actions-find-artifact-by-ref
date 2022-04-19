@@ -10,9 +10,6 @@ inputs:
   artifact_name:
     description: Only match artifacts with this name
     required: true
-  check_name:
-    description: Only search workflows that contain a matching check name
-    required: false
   download:
     description: If set, will download the matched artifact
     required: false

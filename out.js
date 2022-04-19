@@ -6598,7 +6598,6 @@ function flatten(xs) {
 async function getAllCheckSuites(octokit, ref) {
   return octokit.paginate(octokit.rest.checks.listSuitesForRef, __spreadProps(__spreadValues({}, import_github.context.repo), {
     ref,
-    check_name: (0, import_core.getInput)("check_name"),
     status: "completed"
   }));
 }

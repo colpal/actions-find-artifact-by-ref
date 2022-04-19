@@ -10,7 +10,6 @@ async function getAllCheckSuites(octokit, ref) {
   return octokit.paginate(octokit.rest.checks.listSuitesForRef, {
     ...context.repo,
     ref,
-    check_name: getInput('check_name'),
     status: 'completed',
   });
 }
