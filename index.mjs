@@ -49,8 +49,8 @@ async function getAllWorkflowRuns(octokit, checkSuites) {
   ))).then(flatten);
 }
 
-async function getAllArtifacts(octokit, workflowRuns) {
-  return Promise.all(workflowRuns.map(({ id }) => (
+async function getAllArtifacts(octokit, workflowIDs) {
+  return Promise.all(workflowIDs.map((id) => (
     octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, {
       ...context.repo,
       run_id: id,
