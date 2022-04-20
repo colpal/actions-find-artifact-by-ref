@@ -74,9 +74,8 @@ async function main() {
 
   const octokit = getOctokit(token);
 
-  const checkSuites = await getAllCheckSuites(octokit, ref);
-  const workflowRuns = await getAllWorkflowRuns(octokit, checkSuites);
-  const artifacts = await getAllArtifacts(octokit, workflowRuns);
+  const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
+  const artifacts = await getAllArtifacts(octokit, workflowIDs);
 
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
 
