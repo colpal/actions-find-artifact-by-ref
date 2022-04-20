@@ -32,23 +32,6 @@ async function queryWorkflowIDsForCommit(octokit, commit) {
   );
 }
 
-async function getAllCheckSuites(octokit, ref) {
-  return octokit.paginate(octokit.rest.checks.listSuitesForRef, {
-    ...context.repo,
-    ref,
-    status: 'completed',
-  });
-}
-
-async function getAllWorkflowRuns(octokit, checkSuites) {
-  return Promise.all(checkSuites.map(({ id }) => (
-    octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, {
-      ...context.repo,
-      check_suite_id: id,
-    })
-  ))).then(flatten);
-}
-
 async function getAllArtifacts(octokit, workflowIDs) {
   return Promise.all(workflowIDs.map((id) => (
     octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, {
