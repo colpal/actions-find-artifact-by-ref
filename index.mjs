@@ -6,7 +6,7 @@ function flatten(xs) {
   return xs.flat();
 }
 
-async function queryWorkflowsForCommit(octokit, commit) {
+async function queryWorkflowIDsForCommit(octokit, commit) {
   const response = await octokit.graphql(
     `
       query ($owner: String!, $repo: String!, $commit: GitObjectID!) {
@@ -27,7 +27,9 @@ async function queryWorkflowsForCommit(octokit, commit) {
     `,
     { ...context.repo, commit },
   );
-  return response.repository.object.checkSuites.nodes;
+  return response.repository.object.checkSuites.nodes.map(
+    ({ workflowRun: { databaseId } }) => databaseId,
+  );
 }
 
 async function getAllCheckSuites(octokit, ref) {
