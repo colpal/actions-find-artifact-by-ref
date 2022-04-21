@@ -1,5 +1,5 @@
 ---
-name: find-artifact-by-ref
+name: actions-find-artifact-by-ref
 
 description: Find a workflow artifact for a particular ref
 
