@@ -7,7 +7,7 @@ one matching artifacts are found.
 ## Usage
 
 ```yaml
-- uses: colpal/actions-find-artifact-by-ref@v1
+- uses: colpal/actions-find-artifact-by-ref@v2
   with:
     # The git ref for which the workflows should be searched
     # Required
@@ -92,7 +92,7 @@ jobs:
 
       - run: terraform init -input=false
 
-      - uses: colpal/action-find-artifact-by-ref@v1
+      - uses: colpal/action-find-artifact-by-ref@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           artifact_name: tfplan
