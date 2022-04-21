@@ -6595,11 +6595,11 @@ var import_github = __toESM(require_github(), 1);
 function flatten(xs) {
   return xs.flat();
 }
-async function queryWorkflowIDsForCommit(octokit, commit) {
+async function queryWorkflowIDsForCommit(octokit, ref) {
   const response = await octokit.graphql(`
-      query ($owner: String!, $repo: String!, $commit: GitObjectID!) {
+      query ($owner: String!, $repo: String!, $ref: String!) {
         repository(owner: $owner, name: $repo) {
-          object(oid: $commit) {
+          object(expression: $ref) {
             ... on Commit {
               checkSuites(last: 100) {
                 nodes {
@@ -6612,7 +6612,7 @@ async function queryWorkflowIDsForCommit(octokit, commit) {
           }
         }
       }
-    `, __spreadProps(__spreadValues({}, import_github.context.repo), { commit }));
+    `, __spreadProps(__spreadValues({}, import_github.context.repo), { ref }));
   return response.repository.object.checkSuites.nodes.map(({ workflowRun: { databaseId } }) => databaseId);
 }
 async function getAllArtifacts(octokit, workflowIDs) {
