@@ -6613,7 +6613,10 @@ async function queryWorkflowIDsForCommit(octokit, ref) {
         }
       }
     `, __spreadProps(__spreadValues({}, import_github.context.repo), { ref }));
-  return response.repository.object.checkSuites.nodes.map(({ workflowRun: { databaseId } }) => databaseId);
+  return response.repository.object.checkSuites.nodes.map((n) => {
+    var _a;
+    return (_a = n == null ? void 0 : n.workflowRun) == null ? void 0 : _a.databaseId;
+  }).filter(Boolean);
 }
 async function getAllArtifacts(octokit, workflowIDs) {
   return Promise.all(workflowIDs.map((id) => octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, __spreadProps(__spreadValues({}, import_github.context.repo), {

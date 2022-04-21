@@ -27,9 +27,13 @@ async function queryWorkflowIDsForCommit(octokit, ref) {
     `,
     { ...context.repo, ref },
   );
-  return response.repository.object.checkSuites.nodes.map(
-    ({ workflowRun: { databaseId } }) => databaseId,
-  );
+  return response
+    .repository
+    .object
+    .checkSuites
+    .nodes
+    .map((n) => n?.workflowRun?.databaseId)
+    .filter(Boolean);
 }
 
 async function getAllArtifacts(octokit, workflowIDs) {
