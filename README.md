@@ -17,11 +17,6 @@ one matching artifacts are found.
     # Required
     artifact_name: string
 
-    # Restrict search to Checks (Jobs) with this name
-    # Optional
-    # Default: undefined
-    check_name: string
-
     # If true, will download the artifact to the current working directory
     # Optional
     # Default: false

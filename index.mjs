@@ -6,26 +6,38 @@ function flatten(xs) {
   return xs.flat();
 }
 
-async function getAllCheckSuites(octokit, ref) {
-  return octokit.paginate(octokit.rest.checks.listSuitesForRef, {
-    ...context.repo,
-    ref,
-    check_name: getInput('check_name'),
-    status: 'completed',
-  });
+async function queryWorkflowIDsForCommit(octokit, ref) {
+  const response = await octokit.graphql(
+    `
+      query ($owner: String!, $repo: String!, $ref: String!) {
+        repository(owner: $owner, name: $repo) {
+          object(expression: $ref) {
+            ... on Commit {
+              checkSuites(last: 100) {
+                nodes {
+                  workflowRun {
+                    databaseId
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    { ...context.repo, ref },
+  );
+  return response
+    .repository
+    .object
+    .checkSuites
+    .nodes
+    .map((n) => n?.workflowRun?.databaseId)
+    .filter(Boolean);
 }
 
-async function getAllWorkflowRuns(octokit, checkSuites) {
-  return Promise.all(checkSuites.map(({ id }) => (
-    octokit.paginate(octokit.rest.actions.listWorkflowRunsForRepo, {
-      ...context.repo,
-      check_suite_id: id,
-    })
-  ))).then(flatten);
-}
-
-async function getAllArtifacts(octokit, workflowRuns) {
-  return Promise.all(workflowRuns.map(({ id }) => (
+async function getAllArtifacts(octokit, workflowIDs) {
+  return Promise.all(workflowIDs.map((id) => (
     octokit.paginate(octokit.rest.actions.listWorkflowRunArtifacts, {
       ...context.repo,
       run_id: id,
@@ -49,9 +61,8 @@ async function main() {
 
   const octokit = getOctokit(token);
 
-  const checkSuites = await getAllCheckSuites(octokit, ref);
-  const workflowRuns = await getAllWorkflowRuns(octokit, checkSuites);
-  const artifacts = await getAllArtifacts(octokit, workflowRuns);
+  const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
+  const artifacts = await getAllArtifacts(octokit, workflowIDs);
 
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
 
