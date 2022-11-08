@@ -24,7 +24,7 @@ jobs:
 
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
-          EXPECTED: 429097453
+          EXPECTED: 429106975
           ACTUAL: ${{ steps.single.outputs.artifact_id }}
 
       - id: multiple
