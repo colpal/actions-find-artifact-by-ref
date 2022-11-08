@@ -20,7 +20,7 @@ jobs:
 
       - run: md5sum -c <<< "$EXPECTED Banana.zip"
         env:
-          EXPECTED: 9ae11cf898d2956092d297ed9bf339ae
+          EXPECTED: 810671ece8264e9ac7d35fc75855cb5f
 
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
