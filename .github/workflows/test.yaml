@@ -14,7 +14,7 @@ jobs:
       - id: single
         uses: ./
         with:
-          ref: initial-workflow-dispatch
+          ref: target
           artifact_name: Banana
           download: true
 
@@ -24,14 +24,14 @@ jobs:
 
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
-          EXPECTED: 429086847
+          EXPECTED: 429097453
           ACTUAL: ${{ steps.single.outputs.artifact_id }}
 
       - id: multiple
         uses: ./
         continue-on-error: true
         with:
-          ref: initial-workflow-dispatch
+          ref: target
           artifact_name: Apple
 
       - run: test "$EXPECTED" = "$ACTUAL"
@@ -43,7 +43,7 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
-          ref: initial-workflow-dispatch
+          ref: target
           artifact_name: Cherry
 
       - run: test "$EXPECTED" = "$ACTUAL"
