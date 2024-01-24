@@ -5,11 +5,14 @@
       - out.js
       - .github/workflows/test.yaml
 
+env:
+  EXPECTED_ARTIFACT_ID: 1193089889
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - id: single
         uses: ./
@@ -18,13 +21,15 @@ jobs:
           artifact_name: Banana
           download: true
 
-      - run: md5sum -c <<< "$EXPECTED Banana.zip"
+      - run: unzip Banana.zip
+
+      - run: md5sum -c <<< "$EXPECTED Banana.txt"
         env:
-          EXPECTED: 810671ece8264e9ac7d35fc75855cb5f
+          EXPECTED: 50a2fabfdd276f573ff97ace8b11c5f4
 
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
-          EXPECTED: 429106975
+          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
           ACTUAL: ${{ steps.single.outputs.artifact_id }}
 
       - id: multiple
