@@ -5,6 +5,9 @@
       - out.js
       - .github/workflows/test.yaml
 
+env:
+  EXPECTED_ARTIFACT_ID: 1193089889
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
 
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
-          EXPECTED: 429106975
+          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
           ACTUAL: ${{ steps.single.outputs.artifact_id }}
 
       - id: multiple
