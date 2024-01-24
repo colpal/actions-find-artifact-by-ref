@@ -26,5 +26,5 @@ outputs:
     description: The artifact ID of the found artifact
 
 runs:
-  using: node16
+  using: node20
   main: out.js
