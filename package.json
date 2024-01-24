@@ -1,14 +1,12 @@
 {
   "scripts": {
-    "build": "esbuild index.mjs --bundle --outfile=out.js --platform=node --target=node16",
-    "prepare": "husky install"
+    "build": "esbuild index.mjs --bundle --outfile=out.js --platform=node --target=node16"
   },
   "devDependencies": {
     "esbuild": "^0.14.22",
     "eslint": "^8.9.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4",
-    "husky": "^8.0.3"
+    "eslint-plugin-import": "^2.25.4"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
