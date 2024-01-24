@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "watch": "npm run build -- --watch=forever",
     "build": "esbuild index.mjs --bundle --outfile=out.js --platform=node --target=node16"
   },
   "devDependencies": {
