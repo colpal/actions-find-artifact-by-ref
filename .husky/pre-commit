@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-git stash push --include-untracked --keep-index
-npm run build
-git add out.js
-git stash pop
