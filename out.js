@@ -24509,7 +24509,6 @@ throttling.VERSION = VERSION;
 throttling.triggersNotification = triggersNotification;
 
 // index.mjs
-var constantly = (v) => () => v;
 function flatten(xs) {
   return xs.flat();
 }
@@ -24558,8 +24557,14 @@ async function main() {
     token,
     {
       throttle: {
-        onRateLimit: constantly(true),
-        onSecondaryRateLimit: constantly(true)
+        onRateLimit(retryAfter, _options, octokit2, retryCount) {
+          octokit2.log.warn("Rate Limit Hit", { retryAfter });
+          return true;
+        },
+        onSecondaryRateLimit(retryAfter, _options, octokit2, retryCount) {
+          octokit2.log.warn("Secondary Rate Limit Hit", { retryAfter });
+          return true;
+        }
       }
     },
     throttling
