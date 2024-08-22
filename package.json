@@ -7,8 +7,6 @@
     "@eslint/js": "^9.9.0",
     "esbuild": "^0.19.12",
     "eslint": "^9.9.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1",
     "globals": "^15.9.0"
   },
   "dependencies": {
