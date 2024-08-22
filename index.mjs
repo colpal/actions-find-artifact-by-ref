@@ -1,6 +1,7 @@
 import { writeFile } from 'fs/promises';
 import { getBooleanInput, getInput, setOutput } from '@actions/core';
 import { context, getOctokit } from '@actions/github';
+import { throttling } from "@octokit/plugin-throttling";
 
 function flatten(xs) {
   return xs.flat();
@@ -59,7 +60,22 @@ async function main() {
   const artifactName = getInput('artifact_name', { required: true });
   const ref = getInput('ref', { required: true });
 
-  const octokit = getOctokit(token);
+  const octokit = getOctokit(
+    token,
+    {
+      throttle: {
+        onRateLimit(retryAfter, _options, octokit, retryCount) {
+          octokit.log.warn("Rate Limit Hit", { retryAfter });
+          if (retryCount < 1) return true;
+        },
+        onSecondaryRateLimit(retryAfter, _options, octokit, retryCount) {
+          octokit.log.warn("Secondary Rate Limit Hit", { retryAfter });
+          if (retryCount < 1) return true;
+        },
+      },
+    },
+    throttling,
+  );
 
   const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
