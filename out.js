@@ -24554,12 +24554,16 @@ async function main() {
   const token = (0, import_core.getInput)("github_token", { required: true });
   const artifactName = (0, import_core.getInput)("artifact_name", { required: true });
   const ref = (0, import_core.getInput)("ref", { required: true });
-  const octokit = (0, import_github.getOctokit)(token, {
-    throttle: {
-      onRateLimit: constantly(true),
-      onSecondaryRateLimit: constantly(true)
-    }
-  }, throttling);
+  const octokit = (0, import_github.getOctokit)(
+    token,
+    {
+      throttle: {
+        onRateLimit: constantly(true),
+        onSecondaryRateLimit: constantly(true)
+      }
+    },
+    throttling
+  );
   const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);

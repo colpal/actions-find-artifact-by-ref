@@ -62,12 +62,16 @@ async function main() {
   const artifactName = getInput('artifact_name', { required: true });
   const ref = getInput('ref', { required: true });
 
-  const octokit = getOctokit(token, {
-    throttle: {
-      onRateLimit: constantly(true),
-      onSecondaryRateLimit: constantly(true),
-    }
-  }, throttling);
+  const octokit = getOctokit(
+    token,
+    {
+      throttle: {
+        onRateLimit: constantly(true),
+        onSecondaryRateLimit: constantly(true),
+      },
+    },
+    throttling,
+  );
 
   const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
