@@ -66,11 +66,11 @@ async function main() {
       throttle: {
         onRateLimit(retryAfter, _options, octokit, retryCount) {
           octokit.log.warn("Rate Limit Hit", { retryAfter });
-          return true;
+          if (retryCount < 1) return true;
         },
         onSecondaryRateLimit(retryAfter, _options, octokit, retryCount) {
           octokit.log.warn("Secondary Rate Limit Hit", { retryAfter });
-          return true;
+          if (retryCount < 1) return true;
         },
       },
     },

@@ -24559,11 +24559,11 @@ async function main() {
       throttle: {
         onRateLimit(retryAfter, _options, octokit2, retryCount) {
           octokit2.log.warn("Rate Limit Hit", { retryAfter });
-          return true;
+          if (retryCount < 1) return true;
         },
         onSecondaryRateLimit(retryAfter, _options, octokit2, retryCount) {
           octokit2.log.warn("Secondary Rate Limit Hit", { retryAfter });
-          return true;
+          if (retryCount < 1) return true;
         }
       }
     },
