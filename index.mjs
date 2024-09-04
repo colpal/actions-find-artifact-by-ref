@@ -68,6 +68,15 @@ async function getAllArtifacts(octokit, workflowIDs) {
   ))).then(flatten);
 }
 
+async function findWorkflowIDs(octokit, ref, runName) {
+  if (runName) {
+    const checkRuns = await getCheckRunForCommit(octokit, ref, runName);
+    return checkRuns.map(checkRunToWorkflowID);
+  } else {
+    return queryWorkflowIDsForCommit(octokit, ref);
+  }
+}
+
 async function downloadArtifact(octokit, { id, name }) {
   const { data } = await octokit.rest.actions.downloadArtifact({
     ...context.repo,
