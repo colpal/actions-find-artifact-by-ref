@@ -64,6 +64,7 @@ async function main() {
   const token = getInput('github_token', { required: true });
   const artifactName = getInput('artifact_name', { required: true });
   const ref = getInput('ref', { required: true });
+  const runName = getInput('run_name', { required: false });
 
   const octokit = getOctokit(
     token,
