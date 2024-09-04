@@ -110,7 +110,7 @@ async function main() {
   );
 
   const start = await getRemaining(octokit);
-  const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
+  const workflowIDs = await findWorkflowIDs(octokit, ref, runName)
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
 
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
