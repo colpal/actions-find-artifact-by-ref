@@ -72,12 +72,6 @@ async function findWorkflowIDs(octokit, ref, runName) {
   }
 }
 
-async function withAPIUsageLog(octokit, fn) {
-  let start;
-  if (isDebug()) start = await getRemaining(octokit)
-  await fn()
-}
-
 async function downloadArtifact(octokit, { id, name }) {
   const { data } = await octokit.rest.actions.downloadArtifact({
     ...context.repo,
