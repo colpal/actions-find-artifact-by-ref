@@ -20,6 +20,15 @@ async function getCheckRunForCommit(octokit, ref, check_name) {
   });
 }
 
+function checkRunToWorkflowID(checkRun) {
+  const re = "/runs/([^/]+)/job/"
+  const matches = checkRun.details_url.match(re);
+  if (!matches) {
+    throw new Error(`No Workflow ID found for Check Run ${checkRun.id}!`);
+  }
+  return matches[1];
+}
+
 async function queryWorkflowIDsForCommit(octokit, ref) {
   const response = await octokit.graphql(
     `
