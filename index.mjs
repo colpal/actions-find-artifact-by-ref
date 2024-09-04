@@ -12,6 +12,14 @@ async function getRemaining(octokit) {
   return parseInt(response.headers['x-ratelimit-used'], 10)
 }
 
+async function getCheckRunForCommit(octokit, ref, check_name) {
+  return octokit.paginate(octokit.rest.checks.listForRef, {
+    ...context.repo,
+    ref,
+    check_name,
+  });
+}
+
 async function queryWorkflowIDsForCommit(octokit, ref) {
   const response = await octokit.graphql(
     `
