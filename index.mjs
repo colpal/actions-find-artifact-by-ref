@@ -7,6 +7,11 @@ function flatten(xs) {
   return xs.flat();
 }
 
+async function getRemaining(octokit) {
+  const response = await octokit.rest.users.getAuthenticated()
+  return parseInt(response.headers['x-ratelimit-used'], 10)
+}
+
 async function queryWorkflowIDsForCommit(octokit, ref) {
   const response = await octokit.graphql(
     `
@@ -77,6 +82,7 @@ async function main() {
     throttling,
   );
 
+  const start = await getRemaining(octokit);
   const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
 
@@ -100,6 +106,8 @@ async function main() {
       throw new Error(`Multiple artifacts found: [ ${urls} ]`);
     }
   }
+  const apiCalls = await getRemaining(octokit) - start
+  console.log({ apiCalls })
 }
 
 main();
