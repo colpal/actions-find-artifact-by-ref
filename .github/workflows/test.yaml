@@ -10,12 +10,12 @@ env:
   EXPECTED_CHECKSUM: 50a2fabfdd276f573ff97ace8b11c5f4
 
 jobs:
-  test:
+  test-single:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - id: single
+      - id: action
         uses: ./
         with:
           ref: target
@@ -31,9 +31,40 @@ jobs:
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
           EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
-          ACTUAL: ${{ steps.single.outputs.artifact_id }}
+          ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
-      - id: multiple
+
+  test-single-with-run-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: action
+        uses: ./
+        with:
+          ref: target
+          artifact_name: Banana
+          download: true
+          run_name: manual
+
+      - run: unzip Banana.zip
+
+      - run: md5sum -c <<< "$EXPECTED Banana.txt"
+        env:
+          EXPECTED: ${{ env.EXPECTED_CHECKSUM }}
+
+      - run: test "$EXPECTED" = "$ACTUAL"
+        env:
+          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
+          ACTUAL: ${{ steps.action.outputs.artifact_id }}
+
+
+  test-multiple:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: action
         uses: ./
         continue-on-error: true
         with:
@@ -43,9 +74,15 @@ jobs:
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
           EXPECTED: multiple-artifacts
-          ACTUAL: ${{ steps.multiple.outputs.error }}
+          ACTUAL: ${{ steps.action.outputs.error }}
 
-      - id: none
+
+  test-none:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: action
         uses: ./
         continue-on-error: true
         with:
@@ -55,4 +92,4 @@ jobs:
       - run: test "$EXPECTED" = "$ACTUAL"
         env:
           EXPECTED: no-artifacts
-          ACTUAL: ${{ steps.none.outputs.error }}
+          ACTUAL: ${{ steps.action.outputs.error }}
