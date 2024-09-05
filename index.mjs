@@ -81,13 +81,8 @@ async function downloadArtifact(octokit, { id, name }) {
   return writeFile(`${name}.zip`, Buffer.from(data));
 }
 
-async function main() {
-  const token = getInput('github_token', { required: true });
-  const artifactName = getInput('artifact_name', { required: true });
-  const ref = getInput('ref', { required: true });
-  const runName = getInput('run_name', { required: false });
-
-  const octokit = getOctokit(
+function initOctokit(token) {
+  return getOctokit(
     token,
     {
       throttle: {
@@ -103,6 +98,15 @@ async function main() {
     },
     throttling,
   );
+}
+
+async function main() {
+  const token = getInput('github_token', { required: true });
+  const artifactName = getInput('artifact_name', { required: true });
+  const ref = getInput('ref', { required: true });
+  const runName = getInput('run_name', { required: false });
+
+  const octokit = initOctokit(token);
 
   const workflowIDs = await findWorkflowIDs(octokit, ref, runName)
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
