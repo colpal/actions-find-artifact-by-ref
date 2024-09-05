@@ -7,6 +7,23 @@ function flatten(xs) {
   return xs.flat();
 }
 
+async function getCheckRunsForCommit(octokit, ref, check_name) {
+  return octokit.paginate(octokit.rest.checks.listForRef, {
+    ...context.repo,
+    ref,
+    check_name,
+  });
+}
+
+function checkRunToWorkflowID(checkRun) {
+  const re = "/runs/([^/]+)/job/"
+  const matches = checkRun.details_url.match(re);
+  if (!matches) {
+    throw new Error(`No Workflow ID found for Check Run ${checkRun.id}!`);
+  }
+  return matches[1];
+}
+
 async function queryWorkflowIDsForCommit(octokit, ref) {
   const response = await octokit.graphql(
     `
@@ -46,6 +63,16 @@ async function getAllArtifacts(octokit, workflowIDs) {
   ))).then(flatten);
 }
 
+async function findWorkflowIDs(octokit, ref, runName) {
+  if (runName) {
+    const checkRuns = await getCheckRunsForCommit(octokit, ref, runName);
+    const workflowIDs = checkRuns.map(checkRunToWorkflowID);
+    return Array.from(new Set(workflowIDs))
+  } else {
+    return queryWorkflowIDsForCommit(octokit, ref);
+  }
+}
+
 async function downloadArtifact(octokit, { id, name }) {
   const { data } = await octokit.rest.actions.downloadArtifact({
     ...context.repo,
@@ -55,12 +82,8 @@ async function downloadArtifact(octokit, { id, name }) {
   return writeFile(`${name}.zip`, Buffer.from(data));
 }
 
-async function main() {
-  const token = getInput('github_token', { required: true });
-  const artifactName = getInput('artifact_name', { required: true });
-  const ref = getInput('ref', { required: true });
-
-  const octokit = getOctokit(
+function initOctokit(token) {
+  return getOctokit(
     token,
     {
       throttle: {
@@ -76,10 +99,19 @@ async function main() {
     },
     throttling,
   );
+}
 
-  const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
+async function main() {
+  const octokit = initOctokit(getInput('github_token', { required: true }));
+
+  const workflowIDs = await findWorkflowIDs(
+    octokit,
+    getInput('ref', { required: true }),
+    getInput('run_name', { required: false }),
+  )
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
 
+  const artifactName = getInput('artifact_name', { required: true });
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
 
   switch (matchingArtifacts.length) {

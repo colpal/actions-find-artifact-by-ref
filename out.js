@@ -24512,6 +24512,21 @@ throttling.triggersNotification = triggersNotification;
 function flatten(xs) {
   return xs.flat();
 }
+async function getCheckRunsForCommit(octokit, ref, check_name) {
+  return octokit.paginate(octokit.rest.checks.listForRef, {
+    ...import_github.context.repo,
+    ref,
+    check_name
+  });
+}
+function checkRunToWorkflowID(checkRun) {
+  const re = "/runs/([^/]+)/job/";
+  const matches = checkRun.details_url.match(re);
+  if (!matches) {
+    throw new Error(`No Workflow ID found for Check Run ${checkRun.id}!`);
+  }
+  return matches[1];
+}
 async function queryWorkflowIDsForCommit(octokit, ref) {
   const response = await octokit.graphql(
     `
@@ -24541,6 +24556,15 @@ async function getAllArtifacts(octokit, workflowIDs) {
     run_id: id
   }))).then(flatten);
 }
+async function findWorkflowIDs(octokit, ref, runName) {
+  if (runName) {
+    const checkRuns = await getCheckRunsForCommit(octokit, ref, runName);
+    const workflowIDs = checkRuns.map(checkRunToWorkflowID);
+    return Array.from(new Set(workflowIDs));
+  } else {
+    return queryWorkflowIDsForCommit(octokit, ref);
+  }
+}
 async function downloadArtifact(octokit, { id, name }) {
   const { data } = await octokit.rest.actions.downloadArtifact({
     ...import_github.context.repo,
@@ -24549,28 +24573,33 @@ async function downloadArtifact(octokit, { id, name }) {
   });
   return (0, import_promises.writeFile)(`${name}.zip`, Buffer.from(data));
 }
-async function main() {
-  const token = (0, import_core.getInput)("github_token", { required: true });
-  const artifactName = (0, import_core.getInput)("artifact_name", { required: true });
-  const ref = (0, import_core.getInput)("ref", { required: true });
-  const octokit = (0, import_github.getOctokit)(
+function initOctokit(token) {
+  return (0, import_github.getOctokit)(
     token,
     {
       throttle: {
-        onRateLimit(retryAfter, _options, octokit2, retryCount) {
-          octokit2.log.warn("Rate Limit Hit", { retryAfter });
+        onRateLimit(retryAfter, _options, octokit, retryCount) {
+          octokit.log.warn("Rate Limit Hit", { retryAfter });
           if (retryCount < 1) return true;
         },
-        onSecondaryRateLimit(retryAfter, _options, octokit2, retryCount) {
-          octokit2.log.warn("Secondary Rate Limit Hit", { retryAfter });
+        onSecondaryRateLimit(retryAfter, _options, octokit, retryCount) {
+          octokit.log.warn("Secondary Rate Limit Hit", { retryAfter });
           if (retryCount < 1) return true;
         }
       }
     },
     throttling
   );
-  const workflowIDs = await queryWorkflowIDsForCommit(octokit, ref);
+}
+async function main() {
+  const octokit = initOctokit((0, import_core.getInput)("github_token", { required: true }));
+  const workflowIDs = await findWorkflowIDs(
+    octokit,
+    (0, import_core.getInput)("ref", { required: true }),
+    (0, import_core.getInput)("run_name", { required: false })
+  );
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
+  const artifactName = (0, import_core.getInput)("artifact_name", { required: true });
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
   switch (matchingArtifacts.length) {
     case 1: {
