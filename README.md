@@ -24,7 +24,7 @@ one matching artifacts are found.
     # The run name will generally match the job name, but can include additional
     # text if the job run was part of a `matrix` or a reusable workflow
     # Optional
-    # Default: false
+    # Default: ""
     run_name: string
 
     # If true, will download the artifact to the current working directory
