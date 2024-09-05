@@ -24559,7 +24559,8 @@ async function getAllArtifacts(octokit, workflowIDs) {
 async function findWorkflowIDs(octokit, ref, runName) {
   if (runName) {
     const checkRuns = await getCheckRunsForCommit(octokit, ref, runName);
-    return checkRuns.map(checkRunToWorkflowID);
+    const workflowIDs = checkRuns.map(checkRunToWorkflowID);
+    return Array.from(new Set(workflowIDs));
   } else {
     return queryWorkflowIDsForCommit(octokit, ref);
   }
