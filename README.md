@@ -106,6 +106,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           artifact_name: tfplan
+          run_name: plan
           download: true
 
       - run: unzip tfplan.zip
