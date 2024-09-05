@@ -18,6 +18,14 @@ inputs:
     description: The GitHub token used to create an authenticated client
     required: false
     default: ${{ github.token }}
+  run_name:
+    description: |
+      The name of the run that generated the artifact. This can help narrow the
+      number of workflow runs that are considered, reducing the chance of
+      artifact name collisions and reducing the number of necessary API calls.
+      If not provided, all workflow runs for the provided ref will be considered
+    required: false
+    default: ''
 
 outputs:
   error:
