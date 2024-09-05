@@ -101,16 +101,16 @@ function initOctokit(token) {
 }
 
 async function main() {
-  const token = getInput('github_token', { required: true });
-  const artifactName = getInput('artifact_name', { required: true });
-  const ref = getInput('ref', { required: true });
-  const runName = getInput('run_name', { required: false });
+  const octokit = initOctokit(getInput('github_token', { required: true }));
 
-  const octokit = initOctokit(token);
-
-  const workflowIDs = await findWorkflowIDs(octokit, ref, runName)
+  const workflowIDs = await findWorkflowIDs(
+    octokit,
+    getInput('ref', { required: true }),
+    getInput('run_name', { required: false }),
+  )
   const artifacts = await getAllArtifacts(octokit, workflowIDs);
 
+  const artifactName = getInput('artifact_name', { required: true });
   const matchingArtifacts = artifacts.filter((a) => a.name === artifactName);
 
   switch (matchingArtifacts.length) {
