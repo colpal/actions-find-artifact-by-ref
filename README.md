@@ -77,17 +77,17 @@ jobs:
   plan:
     runs-on: # ...
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.1.6
+          terraform_version: 1.5.7
 
       - run: terraform init -input=false
 
       - run: terraform plan -input=false -out=tfplan
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: tfplan
@@ -114,9 +114,9 @@ jobs:
     if: github.event.pull_request.merged == 'true'
     runs-on: # ...
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.1.6
 
