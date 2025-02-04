@@ -6,7 +6,7 @@
       - .github/workflows/test.yaml
 
 env:
-  EXPECTED_ARTIFACT_ID: 1844382885
+  EXPECTED_ARTIFACT_ID: 2535494955
   EXPECTED_CHECKSUM: 50a2fabfdd276f573ff97ace8b11c5f4
 
 jobs:
