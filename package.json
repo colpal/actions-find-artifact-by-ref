@@ -4,7 +4,7 @@
     "build": "esbuild index.mjs --bundle --outfile=out.js --platform=node --target=node20"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.0",
+    "@eslint/js": "^9.20.0",
     "esbuild": "^0.25.0",
     "eslint": "^9.9.0",
     "globals": "^15.9.0"
