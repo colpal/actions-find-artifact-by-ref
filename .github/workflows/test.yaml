@@ -6,6 +6,7 @@
       - .github/workflows/test.yaml
 
 env:
+  TARGET_REF: target
   SINGLE_ARTIFACT_NAME: Banana
   EXPECTED_SINGLE_ARTIFACT_ID: 5642249343
   EXPECTED_SINGLE_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
@@ -19,7 +20,7 @@ jobs:
       - id: action
         uses: ./
         with:
-          ref: target
+          ref: ${{ env.TARGET_REF }}
           artifact_name: ${{ env.SINGLE_ARTIFACT_NAME }}
           download: true
 
@@ -40,7 +41,7 @@ jobs:
       - id: action
         uses: ./
         with:
-          ref: target
+          ref: ${{ env.TARGET_REF }}
           artifact_name: ${{ env.SINGLE_ARTIFACT_NAME }}
           download: true
           run_name: manual
@@ -63,7 +64,7 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
-          ref: target
+          ref: ${{ env.TARGET_REF }}
           artifact_name: Apple
 
       - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
@@ -81,7 +82,7 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
-          ref: target
+          ref: ${{ env.TARGET_REF }}
           artifact_name: Cherry
 
       - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
