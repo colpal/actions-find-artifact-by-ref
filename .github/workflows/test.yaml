@@ -10,6 +10,7 @@ env:
   SINGLE_ARTIFACT_NAME: Banana
   EXPECTED_SINGLE_ARTIFACT_ID: 5642249343
   EXPECTED_SINGLE_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
+  MULTIPLE_ARTIFACT_NAME: Apple
 
 jobs:
   test-single:
@@ -65,7 +66,7 @@ jobs:
         continue-on-error: true
         with:
           ref: ${{ env.TARGET_REF }}
-          artifact_name: Apple
+          artifact_name: ${{ env.MULTIPLE_ARTIFACT_NAME }}
 
       - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
         env:
