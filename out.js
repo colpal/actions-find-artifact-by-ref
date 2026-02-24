@@ -25208,9 +25208,16 @@ async function main() {
       setOutput("error", "no-artifacts");
       throw new Error(`No artifacts found match the name: ${artifactName}`);
     default: {
-      setOutput("error", "multiple-artifacts");
-      const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(", ");
-      throw new Error(`Multiple artifacts found: [ ${urls} ]`);
+      const onDuplicate = getInput("on_duplicate");
+      switch (onDuplicate) {
+        case "error": {
+          setOutput("error", "multiple-artifacts");
+          const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(", ");
+          throw new Error(`Multiple artifacts found: [ ${urls} ]`);
+        }
+        default:
+          throw new Error(`Unsupported Option: on_duplicate = ${onDuplicate}`);
+      }
     }
   }
 }
