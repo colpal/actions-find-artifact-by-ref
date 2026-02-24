@@ -6,6 +6,7 @@
       - .github/workflows/test.yaml
 
 env:
+  SINGLE_ARTIFACT_NAME: Banana
   EXPECTED_ARTIFACT_ID: 5642249343
   EXPECTED_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
 
@@ -19,12 +20,12 @@ jobs:
         uses: ./
         with:
           ref: target
-          artifact_name: Banana
+          artifact_name: ${{ env.SINGLE_ARTIFACT_NAME }}
           download: true
 
-      - run: unzip Banana.zip
+      - run: unzip "$SINGLE_ARTIFACT_NAME.zip"
 
-      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
+      - run: diff <(echo "$EXPECTED_DATA") "$SINGLE_ARTIFACT_NAME.txt"
 
       - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
@@ -40,13 +41,13 @@ jobs:
         uses: ./
         with:
           ref: target
-          artifact_name: Banana
+          artifact_name: ${{ env.SINGLE_ARTIFACT_NAME }}
           download: true
           run_name: manual
 
-      - run: unzip Banana.zip
+      - run: unzip "$SINGLE_ARTIFACT_NAME.zip"
 
-      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
+      - run: diff <(echo "$EXPECTED_DATA") "$SINGLE_ARTIFACT_NAME.txt"
 
       - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
