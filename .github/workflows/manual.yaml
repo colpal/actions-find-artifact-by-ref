@@ -13,6 +13,8 @@ jobs:
     steps:
       - run: uuidgen > "$ARTIFACT_NAME.txt"
 
+      - run: cat "$ARTIFACT_NAME.txt"
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.inputs.artifact_name }}
