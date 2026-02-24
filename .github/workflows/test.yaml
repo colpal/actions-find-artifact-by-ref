@@ -6,8 +6,8 @@
       - .github/workflows/test.yaml
 
 env:
-  EXPECTED_ARTIFACT_ID: 5640189062
-  EXPECTED_CHECKSUM: 50a2fabfdd276f573ff97ace8b11c5f4
+  EXPECTED_ARTIFACT_ID: 5642249343
+  EXPECTED_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
 
 jobs:
   test-single:
@@ -24,13 +24,10 @@ jobs:
 
       - run: unzip Banana.zip
 
-      - run: md5sum -c <<< "$EXPECTED Banana.txt"
-        env:
-          EXPECTED: ${{ env.EXPECTED_CHECKSUM }}
+      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
-          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
 
@@ -49,13 +46,10 @@ jobs:
 
       - run: unzip Banana.zip
 
-      - run: md5sum -c <<< "$EXPECTED Banana.txt"
-        env:
-          EXPECTED: ${{ env.EXPECTED_CHECKSUM }}
+      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
-          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
 
@@ -71,7 +65,7 @@ jobs:
           ref: target
           artifact_name: Apple
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
         env:
           EXPECTED: multiple-artifacts
           ACTUAL: ${{ steps.action.outputs.error }}
@@ -89,7 +83,7 @@ jobs:
           ref: target
           artifact_name: Cherry
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
         env:
           EXPECTED: no-artifacts
           ACTUAL: ${{ steps.action.outputs.error }}
