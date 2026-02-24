@@ -8,10 +8,12 @@
 jobs:
   manual:
     runs-on: ubuntu-latest
+    env:
+      ARTIFACT_NAME: ${{ github.event.inputs.artifact_name }}
     steps:
-      - run: echo 42 > "$ARTIFACT_NAME.txt"
-        env:
-          ARTIFACT_NAME: ${{ github.event.inputs.artifact_name }}
+      - run: uuidgen > "$ARTIFACT_NAME.txt"
+
+      - run: cat "$ARTIFACT_NAME.txt"
 
       - uses: actions/upload-artifact@v4
         with:
