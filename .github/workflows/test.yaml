@@ -24,9 +24,9 @@ jobs:
 
       - run: unzip Banana.zip
 
-      - run: test "$EXPECTED_DATA" = "$(cat Banana.txt)"
+      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
 
-      - run: test "$EXPECTED_ARTIFACT_ID" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
@@ -46,9 +46,9 @@ jobs:
 
       - run: unzip Banana.zip
 
-      - run: test "$EXPECTED_DATA" = "$(cat Banana.txt)"
+      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
 
-      - run: test "$EXPECTED_ARTIFACT_ID" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
@@ -65,7 +65,7 @@ jobs:
           ref: target
           artifact_name: Apple
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
         env:
           EXPECTED: multiple-artifacts
           ACTUAL: ${{ steps.action.outputs.error }}
@@ -83,7 +83,7 @@ jobs:
           ref: target
           artifact_name: Cherry
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
         env:
           EXPECTED: no-artifacts
           ACTUAL: ${{ steps.action.outputs.error }}
