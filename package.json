@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.1",
+    "@actions/github": "^9.0.0",
     "@octokit/plugin-throttling": "^11.0.3"
   },
   "version": "2.2.5",
