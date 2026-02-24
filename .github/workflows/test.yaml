@@ -24,13 +24,10 @@ jobs:
 
       - run: unzip Banana.zip
 
-      - run: test "$EXPECTED" = "$(cat Banana.txt)"
-        env:
-          EXPECTED: ${{ env.EXPECTED_DATA }}
+      - run: test "$EXPECTED_DATA" = "$(cat Banana.txt)"
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: test "$EXPECTED_ARTIFACT_ID" = "$ACTUAL"
         env:
-          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
 
@@ -49,13 +46,10 @@ jobs:
 
       - run: unzip Banana.zip
 
-      - run: test "$EXPECTED" = "$(cat Banana.txt)"
-        env:
-          EXPECTED: ${{ env.EXPECTED_DATA }}
+      - run: test "$EXPECTED_DATA" = "$(cat Banana.txt)"
 
-      - run: test "$EXPECTED" = "$ACTUAL"
+      - run: test "$EXPECTED_ARTIFACT_ID" = "$ACTUAL"
         env:
-          EXPECTED: ${{ env.EXPECTED_ARTIFACT_ID }}
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
 
