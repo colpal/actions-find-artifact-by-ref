@@ -11,6 +11,8 @@ env:
   EXPECTED_SINGLE_ARTIFACT_ID: 5642249343
   EXPECTED_SINGLE_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
   MULTIPLE_ARTIFACT_NAME: Apple
+  EXPECTED_MULTIPLE_NEWEST_ARTIFACT_ID: 5642251514
+  EXPECTED_MULTIPLE_NEWEST_DATA: 5ee7f639-c36e-4da1-8a98-a0f64f3bc8f4
 
 jobs:
   test-single:
@@ -72,6 +74,28 @@ jobs:
         env:
           EXPECTED: multiple-artifacts
           ACTUAL: ${{ steps.action.outputs.error }}
+
+
+  test-multiple-newest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: action
+        uses: ./
+        with:
+          ref: ${{ env.TARGET_REF }}
+          artifact_name: ${{ env.MULTIPLE_ARTIFACT_NAME }}
+          download: true
+          on_duplicate: newest
+
+      - run: unzip "$MULTIPLE_ARTIFACT_NAME.zip"
+
+      - run: diff <(echo "$EXPECTED_MULTIPLE_NEWEST_DATA") "$MULTIPLE_ARTIFACT_NAME.txt"
+
+      - run: diff <(echo "$EXPECTED_MULTIPLE_NEWEST_ARTIFACT_ID") <(echo "$ACTUAL")
+        env:
+          ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
 
   test-none:
