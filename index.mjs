@@ -143,6 +143,11 @@ async function main() {
           const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(', ');
           throw new Error(`Multiple artifacts found: [ ${urls} ]`);
         }
+        case "oldest": {
+          const sorted = sortArtifacts(matchingArtifacts);
+          await succeed(octokit, sorted[0]);
+          return;
+        }
         default:
           throw new Error(`Unsupported Option: on_duplicate = ${onDuplicate}`);
       }

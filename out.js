@@ -25191,6 +25191,10 @@ async function succeed(octokit, artifact) {
     await downloadArtifact(octokit, artifact);
   }
 }
+function sortArtifacts(as) {
+  const clone = [...as];
+  return clone.sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at));
+}
 async function main() {
   const octokit = initOctokit(getInput("github_token", { required: true }));
   const workflowIDs = await findWorkflowIDs(
@@ -25217,6 +25221,11 @@ async function main() {
           setOutput("error", "multiple-artifacts");
           const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(", ");
           throw new Error(`Multiple artifacts found: [ ${urls} ]`);
+        }
+        case "oldest": {
+          const sorted = sortArtifacts(matchingArtifacts);
+          await succeed(octokit, sorted[0]);
+          return;
         }
         default:
           throw new Error(`Unsupported Option: on_duplicate = ${onDuplicate}`);
