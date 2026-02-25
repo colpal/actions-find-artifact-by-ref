@@ -108,6 +108,11 @@ async function succeed(octokit, artifact) {
   }
 }
 
+function sortArtifacts(as) {
+  const clone = [...as];
+  return clone.sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
+}
+
 async function main() {
   const octokit = initOctokit(getInput('github_token', { required: true }));
 
