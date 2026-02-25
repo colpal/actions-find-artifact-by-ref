@@ -101,6 +101,13 @@ function initOctokit(token) {
   );
 }
 
+async function succeed(octokit, artifact) {
+  setOutput('artifact_id', artifact.id);
+  if (getBooleanInput('download')) {
+    await downloadArtifact(octokit, artifact);
+  }
+}
+
 async function main() {
   const octokit = initOctokit(getInput('github_token', { required: true }));
 
@@ -117,10 +124,7 @@ async function main() {
   switch (matchingArtifacts.length) {
     case 1: {
       const [artifact] = matchingArtifacts;
-      setOutput('artifact_id', artifact.id);
-      if (getBooleanInput('download')) {
-        await downloadArtifact(octokit, artifact);
-      }
+      await succeed(octokit, artifact);
       break;
     }
     case 0:
