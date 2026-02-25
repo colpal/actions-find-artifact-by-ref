@@ -101,6 +101,18 @@ function initOctokit(token) {
   );
 }
 
+async function succeed(octokit, artifact) {
+  setOutput('artifact_id', artifact.id);
+  if (getBooleanInput('download')) {
+    await downloadArtifact(octokit, artifact);
+  }
+}
+
+function sortArtifacts(as) {
+  const clone = [...as];
+  return clone.sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
+}
+
 async function main() {
   const octokit = initOctokit(getInput('github_token', { required: true }));
 
@@ -117,19 +129,33 @@ async function main() {
   switch (matchingArtifacts.length) {
     case 1: {
       const [artifact] = matchingArtifacts;
-      setOutput('artifact_id', artifact.id);
-      if (getBooleanInput('download')) {
-        await downloadArtifact(octokit, artifact);
-      }
+      await succeed(octokit, artifact);
       break;
     }
     case 0:
       setOutput('error', 'no-artifacts');
       throw new Error(`No artifacts found match the name: ${artifactName}`);
     default: {
-      setOutput('error', 'multiple-artifacts');
-      const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(', ');
-      throw new Error(`Multiple artifacts found: [ ${urls} ]`);
+      const onDuplicate = getInput("on_duplicate", { required: true });
+      switch (onDuplicate) {
+        case "error": {
+          setOutput('error', 'multiple-artifacts');
+          const urls = matchingArtifacts.map((a) => `'${a.url}'`).join(', ');
+          throw new Error(`Multiple artifacts found: [ ${urls} ]`);
+        }
+        case "oldest": {
+          const sorted = sortArtifacts(matchingArtifacts);
+          await succeed(octokit, sorted[0]);
+          return;
+        }
+        case "newest": {
+          const sorted = sortArtifacts(matchingArtifacts);
+          await succeed(octokit, sorted.at(-1));
+          return;
+        }
+        default:
+          throw new Error(`Unsupported Option: on_duplicate = ${onDuplicate}`);
+      }
     }
   }
 }

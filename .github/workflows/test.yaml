@@ -6,8 +6,15 @@
       - .github/workflows/test.yaml
 
 env:
-  EXPECTED_ARTIFACT_ID: 5642249343
-  EXPECTED_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
+  TARGET_REF: target
+  SINGLE_ARTIFACT_NAME: Banana
+  EXPECTED_SINGLE_ARTIFACT_ID: 5642249343
+  EXPECTED_SINGLE_DATA: acfaf986-653e-429c-a714-3bfb4b131d90
+  MULTIPLE_ARTIFACT_NAME: Apple
+  EXPECTED_MULTIPLE_NEWEST_ARTIFACT_ID: 5642251514
+  EXPECTED_MULTIPLE_NEWEST_DATA: 5ee7f639-c36e-4da1-8a98-a0f64f3bc8f4
+  EXPECTED_MULTIPLE_OLDEST_ARTIFACT_ID: 5642250515
+  EXPECTED_MULTIPLE_OLDEST_DATA: 6509bc47-4874-4059-af09-bd4076ab29c9
 
 jobs:
   test-single:
@@ -18,15 +25,15 @@ jobs:
       - id: action
         uses: ./
         with:
-          ref: target
-          artifact_name: Banana
+          ref: ${{ env.TARGET_REF }}
+          artifact_name: ${{ env.SINGLE_ARTIFACT_NAME }}
           download: true
 
-      - run: unzip Banana.zip
+      - run: unzip "$SINGLE_ARTIFACT_NAME.zip"
 
-      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
+      - run: diff <(echo "$EXPECTED_SINGLE_DATA") "$SINGLE_ARTIFACT_NAME.txt"
 
-      - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
+      - run: diff <(echo "$EXPECTED_SINGLE_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
@@ -39,16 +46,16 @@ jobs:
       - id: action
         uses: ./
         with:
-          ref: target
-          artifact_name: Banana
+          ref: ${{ env.TARGET_REF }}
+          artifact_name: ${{ env.SINGLE_ARTIFACT_NAME }}
           download: true
           run_name: manual
 
-      - run: unzip Banana.zip
+      - run: unzip "$SINGLE_ARTIFACT_NAME.zip"
 
-      - run: diff <(echo "$EXPECTED_DATA") Banana.txt
+      - run: diff <(echo "$EXPECTED_SINGLE_DATA") "$SINGLE_ARTIFACT_NAME.txt"
 
-      - run: diff <(echo "$EXPECTED_ARTIFACT_ID") <(echo "$ACTUAL")
+      - run: diff <(echo "$EXPECTED_SINGLE_ARTIFACT_ID") <(echo "$ACTUAL")
         env:
           ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
@@ -62,13 +69,57 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
-          ref: target
-          artifact_name: Apple
+          ref: ${{ env.TARGET_REF }}
+          artifact_name: ${{ env.MULTIPLE_ARTIFACT_NAME }}
 
       - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")
         env:
           EXPECTED: multiple-artifacts
           ACTUAL: ${{ steps.action.outputs.error }}
+
+
+  test-multiple-newest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: action
+        uses: ./
+        with:
+          ref: ${{ env.TARGET_REF }}
+          artifact_name: ${{ env.MULTIPLE_ARTIFACT_NAME }}
+          download: true
+          on_duplicate: newest
+
+      - run: unzip "$MULTIPLE_ARTIFACT_NAME.zip"
+
+      - run: diff <(echo "$EXPECTED_MULTIPLE_NEWEST_DATA") "$MULTIPLE_ARTIFACT_NAME.txt"
+
+      - run: diff <(echo "$EXPECTED_MULTIPLE_NEWEST_ARTIFACT_ID") <(echo "$ACTUAL")
+        env:
+          ACTUAL: ${{ steps.action.outputs.artifact_id }}
+
+
+  test-multiple-oldest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: action
+        uses: ./
+        with:
+          ref: ${{ env.TARGET_REF }}
+          artifact_name: ${{ env.MULTIPLE_ARTIFACT_NAME }}
+          download: true
+          on_duplicate: oldest
+
+      - run: unzip "$MULTIPLE_ARTIFACT_NAME.zip"
+
+      - run: diff <(echo "$EXPECTED_MULTIPLE_OLDEST_DATA") "$MULTIPLE_ARTIFACT_NAME.txt"
+
+      - run: diff <(echo "$EXPECTED_MULTIPLE_OLDEST_ARTIFACT_ID") <(echo "$ACTUAL")
+        env:
+          ACTUAL: ${{ steps.action.outputs.artifact_id }}
 
 
   test-none:
@@ -80,7 +131,7 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
-          ref: target
+          ref: ${{ env.TARGET_REF }}
           artifact_name: Cherry
 
       - run: diff <(echo "$EXPECTED") <(echo "$ACTUAL")

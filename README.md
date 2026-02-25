@@ -42,6 +42,15 @@ jobs:
         # Default: false
         download: boolean
 
+        # Define what to do if multiple matching artifacts are found. The
+        # possible options are:
+        #   - error: Fail immediately
+        #   - newest: Use the newest matching artifact
+        #   - oldest: Use the oldest matching artifact
+        # Optional
+        # Default: error
+        on_duplicate: string
+
         # The token to use to authenticate to the GitHub API
         # Optional
         # Default: ${{ github.token }}
