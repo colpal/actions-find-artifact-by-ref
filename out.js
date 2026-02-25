@@ -25227,6 +25227,11 @@ async function main() {
           await succeed(octokit, sorted[0]);
           return;
         }
+        case "newest": {
+          const sorted = sortArtifacts(matchingArtifacts);
+          await succeed(octokit, sorted.at(-1));
+          return;
+        }
         default:
           throw new Error(`Unsupported Option: on_duplicate = ${onDuplicate}`);
       }
