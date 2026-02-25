@@ -127,7 +127,7 @@ async function main() {
       setOutput('error', 'no-artifacts');
       throw new Error(`No artifacts found match the name: ${artifactName}`);
     default: {
-      const onDuplicate = getInput("on_duplicate");
+      const onDuplicate = getInput("on_duplicate", { required: true });
       switch (onDuplicate) {
         case "error": {
           setOutput('error', 'multiple-artifacts');
