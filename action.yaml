@@ -45,5 +45,5 @@ outputs:
     description: The artifact ID of the found artifact
 
 runs:
-  using: node20
+  using: node24
   main: out.js
