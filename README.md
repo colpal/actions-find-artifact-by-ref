@@ -86,7 +86,7 @@ jobs:
   plan:
     runs-on: # ...
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -123,7 +123,7 @@ jobs:
     if: github.event.pull_request.merged == 'true'
     runs-on: # ...
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - uses: hashicorp/setup-terraform@v3
         with:
