@@ -14,8 +14,5 @@
     "@actions/github": "^9.0.0",
     "@octokit/plugin-throttling": "^11.0.3"
   },
-  "version": "2.3.0",
-  "volta": {
-    "node": "24.18.0"
-  }
+  "version": "2.3.0"
 }
